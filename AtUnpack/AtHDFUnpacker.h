@@ -9,12 +9,12 @@
 
 #include <Rtypes.h>
 
+#include <H5Cpp.h> // for hsize_t, herr_t
 #include <H5Dpublic.h>
 #include <H5Ipublic.h>
 #include <H5Lpublic.h>
 #include <H5Ppublic.h>
 #include <H5Spublic.h>
-#include <H5public.h>
 #include <stdint.h>
 
 #include <cstddef>
