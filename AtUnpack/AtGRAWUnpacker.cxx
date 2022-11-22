@@ -49,15 +49,20 @@ void AtGRAWUnpacker::Init()
       LOG(error) << "Problem setting the data pointer to the first file in the list!";
 
    std::vector<int> iniFrameIDs;
+   LOG(info) << fNumFiles << "is fNumFiles";
    LOG(info) << "Initial frame IDs";
    for (int i = 0; i < fNumFiles; ++i) {
+      LOG(info) << i << "file";
       GETBasicFrame *basicFrame = fDecoder[i]->GetBasicFrame(-1);
       iniFrameIDs.push_back(basicFrame->GetEventID());
       LOG(info) << i << " " << iniFrameIDs.back();
    }
+   LOG(info) << "frames created";
    fTargetFrameID = -1;
    fDataEventID = *std::max_element(begin(iniFrameIDs), end(iniFrameIDs)) + fEventID;
    fTargetFrameID = *std::max_element(begin(iniFrameIDs), end(iniFrameIDs)) + fEventID;
+   
+   LOG(info) << "GRAWUnpacker init complete";
 }
 void AtGRAWUnpacker::FindAndSetNumEvents()
 {
