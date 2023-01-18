@@ -3,7 +3,6 @@
 
 #include "AtDataObserver.h"
 #include "AtDataSubject.h"
-#include "AtSubjectEventViewer.h"
 
 #include <FairLogger.h> // for Logger, LOG
 #include <FairRootManager.h>

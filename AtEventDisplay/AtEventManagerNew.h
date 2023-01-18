@@ -2,7 +2,6 @@
 #define AtEVENTMANAGERNEW_H
 
 #include "AtDataSubject.h"
-#include "AtSubjectEventViewer.h"
 
 #include <FairRunAna.h>
 
