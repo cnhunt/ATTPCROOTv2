@@ -20,9 +20,8 @@ void AtTabInfo::Init()
 
 void AtTabInfo::Update()
 {
-   for (auto const &[name, info] : fInfoAugments) {
-      LOG(debug2) << "Updating " << name;
-      info->Update();
+   for (auto const &x : fInfoAugments) {
+      x.second->Update();
    }
 }
 

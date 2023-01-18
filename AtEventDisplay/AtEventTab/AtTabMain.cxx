@@ -158,24 +158,19 @@ void AtTabMain::UpdateTab()
 {
    fEvent = dynamic_cast<AtTabInfoFairRoot<AtEvent> *>(fTabInfo->GetAugment(fInfoEventName))->GetInfo();
    fRawEvent = dynamic_cast<AtTabInfoFairRoot<AtRawEvent> *>(fTabInfo->GetAugment(fInfoRawEventName))->GetInfo();
-   LOG(debug) << "Event ID " << fEvent->GetEventID() << " Raw Event ID " << fRawEvent->GetEventID();
 }
 
 void AtTabMain::DrawEvent()
 {
-   LOG(debug) << "Drawing tab " << fTabNumber;
    DrawHitPoints();
    gEve->Redraw3D(kFALSE);
    UpdateCvsPadPlane();
-   LOG(debug) << "Done Drawing tab " << fTabNumber << std::endl;
 }
 
 void AtTabMain::DrawPad(Int_t PadNum)
 {
-   LOG(debug) << "Drawing main pad " << fTabNumber;
    DrawWave(PadNum);
    UpdateCvsPadWave();
-   LOG(debug) << "Done Drawing main pad " << fTabNumber;
 }
 
 void AtTabMain::SetMultiHit(Int_t hitMax)
@@ -230,7 +225,6 @@ void AtTabMain::DrawPadWave()
 
 void AtTabMain::DrawHitPoints()
 {
-
    if (fEvent == nullptr) {
       std::cout << "CRITICAL ERROR: Event missing for TabMain. Aborting draw." << std::endl;
       return;
@@ -239,8 +233,6 @@ void AtTabMain::DrawHitPoints()
 
    std::ofstream dumpEvent;
    dumpEvent.open("event.dat");
-
-   LOG(debug) << "Drawing 3D cloud for " << fEvent->GetEventID();
 
    Int_t eventID = fEvent->GetEventID();
    TString TSevt = " Event ID : ";
@@ -255,7 +247,7 @@ void AtTabMain::DrawHitPoints()
    fHitSet->SetMarkerColor(fHitColor);
    fHitSet->SetMarkerSize(fHitSize);
    fHitSet->SetMarkerStyle(fHitStyle);
-   LOG(info) << cBLUE << " Number of hits : " << nHits << cNORMAL;
+   std::cout << cBLUE << " Number of hits : " << nHits << cNORMAL << std::endl;
 
    for (Int_t iHit = 0; iHit < nHits; iHit++) {
 

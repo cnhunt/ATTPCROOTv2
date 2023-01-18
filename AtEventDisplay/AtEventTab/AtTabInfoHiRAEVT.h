@@ -33,8 +33,7 @@ public:
    }
    void Update() override
    { // Get the current entry of the tree
-
-      auto entry = FairRootManager::Instance()->GetInTree()->GetReadEntry();
+      auto entry = FairRootManager::Instance()->GetInTree()->GetEntry();
       fReader->SetEntry(entry);
       fDetector = fDetectorReader->Get();
    }

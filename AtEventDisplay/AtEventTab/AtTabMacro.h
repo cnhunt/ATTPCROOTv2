@@ -27,6 +27,8 @@ class TTree;
 
 class AtTabMacro : public AtTabBase {
 protected:
+   AtEventManagerNew *fEventManager;
+
    std::shared_ptr<AtMap> fDetmap;
 
    TString fMap;
@@ -52,12 +54,10 @@ public:
    void UpdateTab() override{};
    void Reset() override;
    void MakeTab() override;
-
    void SetInputTree(TString fileName, TString treeName);
    void SetDrawTreeFunction(Int_t pos, std::function<void(TTree(*))> function);
    void SetDrawEventFunction(Int_t pos, std::function<void(AtTabInfo(*))> function);
    void SetDrawPadFunction(Int_t pos, std::function<void(AtTabInfo(*), Int_t)> function);
-
    void SetMap(std::shared_ptr<AtMap> map) { fDetmap = map; }
    void SetColumns(Int_t cols) { fCols = cols; }
    void SetRows(Int_t rows) { fRows = rows; }

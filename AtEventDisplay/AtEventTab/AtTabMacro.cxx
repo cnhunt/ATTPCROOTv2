@@ -35,6 +35,9 @@ void AtTabMacro::InitTab()
 
    std::cout << " =====  AtTabMacro::Init =====" << std::endl;
 
+   // gROOT->Reset();
+   fEventManager = AtEventManagerNew::Instance();
+
    //******* NO CALLS TO TCANVAS BELOW THIS ONE
 
    if (fTabName == "Macro") {
@@ -42,6 +45,7 @@ void AtTabMacro::InitTab()
       sprintf(name, "Macro %i", fTabNumber);
       fTabName = name;
    }
+
 
    std::cout << " AtTabMacro::Init : Initialization complete! "
              << "\n";
@@ -109,7 +113,6 @@ void AtTabMacro::DrawEvent()
 
 void AtTabMacro::DrawPad(Int_t padNum)
 {
-
    for (int i = 0; i < fCols * fRows; i++) {
       fCvsMacro->cd(i + 1);
       gPad->Clear();
