@@ -7,6 +7,8 @@
 #include "AtPadBase.h" // for AtPadBase
 #include "AtRawEvent.h"
 #include "AtTabInfo.h"
+#include "AtTabInfoBase.h"
+#include "AtTabInfoFairRoot.h"
 
 #include <FairLogger.h> // for LOG
 

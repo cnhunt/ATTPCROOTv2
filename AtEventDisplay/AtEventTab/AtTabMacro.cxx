@@ -2,6 +2,7 @@
 
 #include "AtEventManagerNew.h"
 #include "AtTabInfo.h"
+#include "AtTabInfoBase.h"
 
 #include <FairLogger.h> // for LOG
 
