@@ -80,7 +80,7 @@ AtEventDrawTaskNew::AtEventDrawTaskNew()
    : fEventArray(nullptr), fEventManager(nullptr), fRawevent(nullptr), fDetmap(nullptr), fThreshold(0),
      fHitSet(nullptr), fPadPlanePal(nullptr), fHitColor(kPink), fHitSize(1), fHitStyle(kFullDotMedium),
      fCvsPadPlane(nullptr), fPadPlane(nullptr), fCvsPadWave(nullptr), fPadWave(nullptr), fAtMapPtr(nullptr),
-     fMultiHit(0), fTaskNumber(0), fRawEventBranchName("AtRawEvent"), fEventBranchName("AtEventH")
+     fMultiHit(0), fRawEventBranchName("AtRawEvent"), fEventBranchName("AtEventH")
 {
 
    fIsRawData = kFALSE;
@@ -120,14 +120,12 @@ InitStatus AtEventDrawTaskNew::Init()
    gStyle->SetPalette(55);
 
    fCvsPadWave = fEventManager->GetCvsPadWave();
-   char name[20];
-   sprintf(name, "fCvsPadWave_DT%i", fTaskNumber);
-   fCvsPadWave->SetName(name);
+   fCvsPadWave->SetName("fCvsPadWave");
    gROOT->GetListOfSpecials()->Add(fCvsPadWave);
    DrawPadWave();
    fCvsPadPlane = fEventManager->GetCvsPadPlane(); // There is a problem if the pad plane is drawn first
    fCvsPadPlane->ToggleEventStatus();
-   //fCvsPadPlane->AddExec("ex", "AtEventDrawTaskNew::SelectPad(\"fRawEvent\")");
+   fCvsPadPlane->AddExec("ex", "AtEventDrawTaskNew::SelectPad(\"fRawEvent\")");
    DrawPadPlane();
    /*fCvsQuadrant1 = fEventManager->GetCvsQuadrant1();
     fCvsQuadrant2 = fEventManager->GetCvsQuadrant2();
@@ -170,9 +168,7 @@ void AtEventDrawTaskNew::DrawHitPoints()
 
    if (fIsRawData) {
       fRawevent = dynamic_cast<AtRawEvent *>(fRawEventArray->At(0));
-      char name[20];
-      sprintf(name, "fRawEvent_DT%i", fTaskNumber);
-      fRawevent->SetName(name);
+      fRawevent->SetName("fRawEvent");
       gROOT->GetListOfSpecials()->Add(fRawevent);
    }
 
@@ -246,9 +242,7 @@ void AtEventDrawTaskNew::DrawPadPlane()
 
 void AtEventDrawTaskNew::DrawPadWave()
 {
-   char name[20];
-   sprintf(name, "fPadWave_DT%i", fTaskNumber);
-   fPadWave = new TH1I(name, name, 512, 0, 511);
+   fPadWave = new TH1I("fPadWave", "fPadWave", 512, 0, 511);
    gROOT->GetListOfSpecials()->Add(fPadWave);
    fCvsPadWave->cd();
    fPadWave->Draw();
@@ -388,47 +382,13 @@ void AtEventDrawTaskNew::SelectPad(const char *rawevt)
    }
 }
 
-void AtEventDrawTaskNew::DrawPad(Int_t taskNum, Int_t PadNum)
+void AtEventDrawTaskNew::DrawWave(Int_t PadNum)
 {
-   char name[20];
-   sprintf(name, "fRawEvent_DT%i", taskNum);
-   std::cout << "checking fRawevent" << std::endl;
-   AtRawEvent *tRawEvent = dynamic_cast<AtRawEvent *>(gROOT->GetListOfSpecials()->FindObject(name));
-   if(tRawEvent == nullptr) {
-      std::cout << "tRawEvent is NULL!" << std::endl;
-   } else {
-      std::cout << "tRawEvent is not nullptr" << std::endl;
-      AtPad *tPad = tRawEvent->GetPad(PadNum);
-      if (tPad == nullptr)
-         return;
-      auto rawadc = tPad->GetRawADC();
-      auto adc = tPad->GetADC();
-      sprintf(name, "fPadWave_DT%i", taskNum);
-      TH1I *tPadWave = nullptr;
-      tPadWave = dynamic_cast<TH1I *>(gROOT->GetListOfSpecials()->FindObject(name));
-      if (tPadWave == nullptr) {
-         std::cout << " = AtEventDrawTaskNew::SelectPad NULL pointer for the TH1I! Please enable SetPersistance for "
-                      "Unpacking task or select an event first "
-                   << std::endl;
-         return;
-      }
-      tPadWave->Reset();
-      for (Int_t i = 0; i < 512; i++) {
-         tPadWave->SetBinContent(i, adc[i]);
-      }
 
-      sprintf(name, "fCvsPadWave_DT%i", taskNum);
-      TCanvas *tCvsPadWave = nullptr;
-      tCvsPadWave = dynamic_cast<TCanvas *>(gROOT->GetListOfSpecials()->FindObject(name));
-      if (tCvsPadWave == nullptr) {
-         std::cout << " = AtEventDrawTaskNew::SelectPad NULL pointer for the TCanvas! Please select an event first "
-                   << std::endl;
-         return;
-      }
-      tCvsPadWave->cd();
-      tPadWave->Draw();
-      tCvsPadWave->Update();
-   }
+   // Bool_t IsValid=kFALSE;
+   // AtPad *pad = fRawevent->GetPad(0);
+   // AtPad *pad= fRawevent->GetPad(PadNum,IsValid);
+   // std::cout<<" Raw Event Pad Num "<<pad->GetPadNum()<<" Is Valid? : "<<IsValidPad<<std::endl;
 }
 
 void AtEventDrawTaskNew::SetMultiHit(Int_t hitMax)
