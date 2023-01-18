@@ -9,9 +9,8 @@
 #include <TString.h> // for TString
 
 #include <memory> // for shared_ptr
-#include <set>
 #include <string> // for string
-
+class AtTabInfo;
 class TBuffer;
 class TClass;
 class TMemberInspector;
@@ -23,7 +22,6 @@ class TEveRGBAPalette;
 class TH2Poly;
 class TH1I;
 class TPaletteAxis;
-class AtTabInfo;
 
 class AtTabMain : public AtTabBase {
 protected:

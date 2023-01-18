@@ -17,7 +17,6 @@ AtEventTab/AtTabMacro.cxx
 AtEventTab/AtTabBase.cxx
 
 AtEventTab/AtTabInfo.cxx
-AtEventTab/AtDataSource.cxx
 
 AtEventManager.cxx
 AtEventManagerNew.cxx
@@ -64,4 +63,3 @@ set_source_files_properties(AtEventDrawTask.cxx PROPERTIES COMPILE_FLAGS -Wno-sh
 set_source_files_properties(AtEventDrawTaskNew.cxx PROPERTIES COMPILE_FLAGS -Wno-shadow)
 set_source_files_properties(AtEventDrawTaskProto.cxx PROPERTIES COMPILE_FLAGS -Wno-shadow)
 set_source_files_properties(AtEventDrawTaskS800.cxx PROPERTIES COMPILE_FLAGS -Wno-shadow)
-set_source_files_properties(AtTabMain.cxx PROPERTIES COMPILE_FLAGS -Wno-shadow)
