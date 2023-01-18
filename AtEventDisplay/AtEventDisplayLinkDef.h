@@ -16,6 +16,5 @@
 
 #pragma link C++ class AtEventTab + ;
 #pragma link C++ class AtEventTabMain + ;
-#pragma link C++ class AtEventTabPad + ;
 
 #endif
