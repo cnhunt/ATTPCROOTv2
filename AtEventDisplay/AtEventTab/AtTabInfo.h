@@ -3,22 +3,22 @@
 
 #include "AtTabInfoBase.h"
 
-#include <Rtypes.h> // for THashConsistencyHolder, ClassDefOverride
+#include <TString.h>
 
-#include <map>
-#include <memory> // for unique_ptr
 #include <string>
+#include <map>
 
-class TBuffer;
-class TClass;
-class TMemberInspector;
+class AtRawEvent;
+class AtEvent;
+class TClonesArray;
+class AtEventManagerNew;
 
 class AtTabInfo : public AtTabInfoBase {
 protected:
    std::map<std::string, std::unique_ptr<AtTabInfoBase>> fInfoAugments;
 
 public:
-   AtTabInfo() = default;
+   AtTabInfo();
    void Init() override;
    void Update() override;
 

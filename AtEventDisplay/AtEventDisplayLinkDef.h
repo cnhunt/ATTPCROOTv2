@@ -20,11 +20,8 @@
 
 #pragma link C++ class AtTabInfoBase + ;
 #pragma link C++ class AtTabInfo + ;
-// clang-format off
-#pragma link C++ class AtTabInfoFairRoot<AtEvent> + ;
-#pragma link C++ class AtTabInfoFairRoot<AtRawEvent> + ;
-#pragma link C++ class AtTabInfoFairRoot<AtPatternEvent> + ;
-// clang-format on
+#pragma link C++ class AtTabInfoEvent + ;
+#pragma link C++ class AtTabInfoRawEvent + ;
 #pragma link C++ class AtTabInfoHEISTmusic + ;
 
 #endif

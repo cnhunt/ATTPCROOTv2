@@ -12,11 +12,11 @@ constexpr auto cNORMAL = "\033[0m";
 constexpr auto cGREEN = "\033[1;32m";
 constexpr auto cBLUE = "\033[1;34m";
 
-ClassImp(AtTabInfoHEISTmusic);
+ClassImp(AtTabInfoHEISTmusic)
 
-AtTabInfoHEISTmusic::AtTabInfoHEISTmusic()
+AtTabInfoHEISTmusic::AtTabInfoHEISTmusic() 
 {
-   fInfoRawEvent = std::make_unique<AtTabInfoFairRoot<AtRawEvent>>();
+   fInfoRawEvent = std::make_unique<AtTabInfoRawEvent>();
 }
 
 void AtTabInfoHEISTmusic::Init()
@@ -29,6 +29,7 @@ void AtTabInfoHEISTmusic::Init()
 void AtTabInfoHEISTmusic::Update()
 {
    fInfoRawEvent->Update();
-   fReader->SetEntry(fInfoRawEvent->GetInfo()->GetEventID());
+   fReader->SetEntry(fInfoRawEvent->GetRawEvent()->GetEventID());
    fMusicIC = fMusicReader->Get();
 }
+

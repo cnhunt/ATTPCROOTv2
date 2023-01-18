@@ -1,7 +1,12 @@
 #include "AtTabTask.h"
 // IWYU pragma: no_include <ext/alloc_traits.h>
-
 #include "AtEventManagerNew.h" // for AtEventManager
+
+#include <FairLogger.h>      // for Logger, LOG
+#include <FairRootManager.h> // for FairRootManager
+
+#include <TROOT.h> // for TROOT, gROOT
+#include <TStyle.h>
 
 #include <iostream>
 

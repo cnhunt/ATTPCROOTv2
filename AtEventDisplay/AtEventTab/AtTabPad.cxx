@@ -2,13 +2,15 @@
 
 #include "AtEvent.h"
 #include "AtEventManagerNew.h"
+#include "AtMap.h"
 #include "AtPad.h"
 #include "AtPadArray.h"
 #include "AtPadBase.h" // for AtPadBase
 #include "AtRawEvent.h"
 #include "AtTabInfo.h"
 #include "AtTabInfoBase.h"
-#include "AtTabInfoFairRoot.h"
+#include "AtTabInfoEvent.h"
+#include "AtTabInfoRawEvent.h"
 
 #include <FairLogger.h> // for LOG
 
@@ -16,11 +18,18 @@
 #include <TEveBrowser.h>
 #include <TEveManager.h>
 #include <TEveWindow.h>
+#include <TGTab.h>
 #include <TH1.h> // for TH1D
+#include <TH1D.h>
+#include <TROOT.h> // for TROOT, gROOT
+#include <TRootEmbeddedCanvas.h>
+#include <TStyle.h>
+
+#include <cstdio> // for sprintf
 
 #include <array>    // for array
-#include <cstdio>   // for sprintf
 #include <iostream> // for operator<<, basic_ostream::operator<<
+#include <vector>   // for allocator
 
 constexpr auto cRED = "\033[1;31m";
 constexpr auto cYELLOW = "\033[1;33m";
@@ -49,8 +58,10 @@ void AtTabPad::InitTab()
       fTabName = name;
    }
 
-   auto tTabInfoEvent = std::make_unique<AtTabInfoFairRoot<AtEvent>>(fEventBranch);
-   auto tTabInfoRawEvent = std::make_unique<AtTabInfoFairRoot<AtRawEvent>>(fRawEventBranch);
+   auto tTabInfoEvent = std::make_unique<AtTabInfoEvent>();
+   tTabInfoEvent->SetBranch(fEventBranch);
+   auto tTabInfoRawEvent = std::make_unique<AtTabInfoRawEvent>();
+   tTabInfoRawEvent->SetBranch(fRawEventBranch);
 
    fTabInfo->AddAugment(fInfoEventName, std::move(tTabInfoEvent));
    fTabInfo->AddAugment(fInfoRawEventName, std::move(tTabInfoRawEvent));
@@ -88,8 +99,8 @@ void AtTabPad::MakeTab()
 
 void AtTabPad::UpdateTab()
 {
-   fEvent = dynamic_cast<AtTabInfoFairRoot<AtEvent> *>(fTabInfo->GetAugment(fInfoEventName))->GetInfo();
-   fRawEvent = dynamic_cast<AtTabInfoFairRoot<AtRawEvent> *>(fTabInfo->GetAugment(fInfoRawEventName))->GetInfo();
+   fEvent = dynamic_cast<AtTabInfoEvent *>(fTabInfo->GetAugment(fInfoEventName))->GetEvent();
+   fRawEvent = dynamic_cast<AtTabInfoRawEvent *>(fTabInfo->GetAugment(fInfoRawEventName))->GetRawEvent();
 }
 
 void AtTabPad::DrawPad(Int_t padNum)
