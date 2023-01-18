@@ -20,23 +20,29 @@ namespace DataHandling {
 class Subject;
 }
 
-/**
- * Class used by AtEventManagerNew to manage tabs and keeping them upto date as we move through events.
- */
 class AtTabTask : public FairTask {
 protected:
    std::vector<std::unique_ptr<AtTabBase>> fTabs;
 
+   TTree *fTree{nullptr};
+   TString fTreeName;
+
 public:
-   void AddTab(std::unique_ptr<AtTabBase> tab);
-   void AddDataSourceToTabs(DataHandling::Subject *subject);
+   AtTabTask() {}
+
+   virtual ~AtTabTask() = default;
 
    InitStatus Init() override;
    void Exec(Option_t *option) override;
-   void DrawTabPads(Int_t PadNum);
-
-private:
    void Reset();
+
+   void MakeTab();
+   void DrawPad(Int_t PadNum);
+
+   void AddTab(std::unique_ptr<AtTabBase> tab) { fTabs.push_back(std::move(tab)); }
+
+   void AddDataSourceToTabs(DataHandling::Subject *subject);
+
    ClassDefOverride(AtTabTask, 1);
 };
 

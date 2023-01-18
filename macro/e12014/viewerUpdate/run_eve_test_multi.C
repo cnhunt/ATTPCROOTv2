@@ -54,9 +54,11 @@ void run_eve_test_multi(int runNum = 214, TString OutputDataFile = "./data/outpu
    tabPad->SetDrawADC(1);
    // tabPad->SetDrawArrayAug(2, "Qreco");
 
-   eveMan->AddTab(std::move(tabMain));
-   eveMan->AddTab(std::move(tabPad));
+   AtTabTask *tab = new AtTabTask();
+   tab->AddTab(std::move(tabMain));
+   tab->AddTab(std::move(tabPad));
 
+   eveMan->AddTask(tab);
    eveMan->Init();
 
    std::cout << "Finished init" << std::endl;
