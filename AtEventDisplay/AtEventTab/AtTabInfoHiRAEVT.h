@@ -39,7 +39,7 @@ public:
       fDetector = fDetectorReader->Get();
    }
 
-   void Update(DataHandling::Subject *changedSubject) override {}
+   void Update(SubjectBase *changedSubject) override {}
 
    T *GetInfo()
    {
