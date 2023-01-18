@@ -18,6 +18,7 @@ AtEventManager.cxx
 AtEventManagerNew.cxx
 AtEventManagerProto.cxx
 AtEventDrawTask.cxx
+AtEventDrawTaskNew.cxx
 AtEventTabTaskBase.cxx
 AtEventTabTask.cxx
 AtEventDrawTaskProto.cxx
