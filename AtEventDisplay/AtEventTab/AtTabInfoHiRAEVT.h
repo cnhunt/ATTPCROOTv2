@@ -5,13 +5,19 @@
 
 #include <FairRootManager.h>
 
+#include <Rtypes.h> // for ClassDefOverride
 #include <TString.h>
 #include <TTree.h> // for TTree
 #include <TTreeReader.h>
+//#include <TTreeReaderValue.h>
 
 #include <memory> // for unique_ptr, make_unique
+class TBuffer;
+class TClass;
+class TMemberInspector;
 template <typename T>
 class TTreeReaderValue;
+// class TTreeReader;
 
 template <typename T>
 class AtTabInfoHiRAEVT : public AtTabInfoBase {
@@ -41,6 +47,8 @@ public:
    T *GetInfo() { return fDetector; }
 
    void SetTree(TString name) { fTree = name; }
+
+   ClassDefOverride(AtTabInfoHiRAEVT, 1);
 };
 
 #endif

@@ -1,6 +1,11 @@
 #ifndef ATTABINFOBASE_H
 #define ATTABINFOBASE_H
 
+#include <Rtypes.h>
+class TBuffer;
+class TClass;
+class TMemberInspector;
+
 class AtTabInfoBase {
 public:
    AtTabInfoBase() = default;
@@ -14,6 +19,8 @@ public:
     * @brief update the data this holds from its source.
     */
    virtual void Update() = 0;
+
+   ClassDef(AtTabInfoBase, 1);
 };
 
 #endif

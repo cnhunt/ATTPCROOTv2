@@ -11,6 +11,8 @@ constexpr auto cNORMAL = "\033[0m";
 constexpr auto cGREEN = "\033[1;32m";
 constexpr auto cBLUE = "\033[1;34m";
 
+ClassImp(AtTabInfo);
+
 void AtTabInfo::Init()
 {
    for (auto const &x : fInfoAugments) {
