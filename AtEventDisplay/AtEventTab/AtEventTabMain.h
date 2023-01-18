@@ -1,8 +1,7 @@
-#ifndef ATTABMAIN_H
-#define ATTABMAIN_H
+#ifndef ATEVENTTABMAIN_H
+#define ATEVENTTABMAIN_H
 
-#include "AtTabBase.h"
-#include "AtTabInfo.h"
+#include "AtEventTab.h"
 
 #include <Rtypes.h>  // for Int_t, Bool_t, THashConsistencyHolder, Color_t
 #include <TString.h> // for TString
@@ -18,7 +17,7 @@ class TH2Poly;
 class TH1I;
 class TPaletteAxis;
 
-class AtTabMain : public AtTabBase {
+class AtEventTabMain : public AtEventTab {
 protected:
    AtRawEvent *fRawEvent;
    AtEvent *fEvent;
@@ -46,33 +45,19 @@ protected:
    Int_t fMultiHit{10};
    Bool_t fIsRawData;
 
-   TString fEventBranch;
-   TString fRawEventBranch;
-
-   std::string fInfoEventName;
-   std::string fInfoRawEventName;
-
    TEveRGBAPalette *fRGBAPalette;
 
 public:
-   AtTabMain();
-   void InitTab() override;
-   void UpdateTab() override;
+   AtEventTabMain();
+   void Init() override;
    void Reset() override;
    void MakeTab() override;
-   void DrawTree() override { };
-   void DrawEvent() override;
-   void DrawPad(Int_t PadNum) override;
-
-   AtTabInfo *GetTabInfo() { return fTabInfo; }
-
    void SetMap(std::shared_ptr<AtMap> map) { fDetmap = map; }
    void SetThreshold(Int_t val) { fThreshold = val; }
    void SetHitAttributes(Color_t, Size_t, Style_t);
+   void DrawEvent(AtRawEvent *rawEvent, AtEvent *event) override;
+   void DrawPad(Int_t PadNum) override;
    void SetMultiHit(Int_t hitMax);
-
-   void SetEventBranch(TString name) { fEventBranch = name; }
-   void SetRawEventBranch(TString name) { fRawEventBranch = name; }
 
 private:
    void DrawPadPlane();
@@ -85,7 +70,7 @@ private:
    void DrawHitPoints();
    void DrawWave(Int_t PadNum);
 
-   ClassDefOverride(AtTabMain, 1)
+   ClassDefOverride(AtEventTabMain, 1)
 };
 
 #endif

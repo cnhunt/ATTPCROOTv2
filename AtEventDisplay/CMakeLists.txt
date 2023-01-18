@@ -11,21 +11,17 @@ ${CMAKE_SOURCE_DIR}/AtEventDisplay/AtEventTab
 set(SRCS
 # Add all the source files below this line. Those must have cc for their extension.
 
-AtEventTab/AtTabMain.cxx
-AtEventTab/AtTabPad.cxx
-AtEventTab/AtTabMacro.cxx
-AtEventTab/AtTabBase.cxx
-
-AtEventTab/AtTabInfo.cxx
-AtEventTab/AtTabInfoEvent.cxx
-AtEventTab/AtTabInfoRawEvent.cxx
-AtEventTab/AtTabInfoBase.cxx
+AtEventTab/AtEventTab.cxx
+AtEventTab/AtEventTabMain.cxx
+AtEventTab/AtEventTabPad.cxx
+AtEventTab/AtEventTabMacro.cxx
 
 AtEventManager.cxx
 AtEventManagerNew.cxx
 AtEventManagerProto.cxx
 AtEventDrawTask.cxx
-AtTabTask.cxx
+AtEventTabTaskBase.cxx
+AtEventTabTask.cxx
 AtEventDrawTaskProto.cxx
 AtEventManagerS800.cxx
 AtEventDrawTaskS800.cxx
@@ -45,15 +41,6 @@ Set(DEPENDENCIES
   ATTPCROOT::AtS800
   ATTPCROOT::AtAnalysis
   )
-
-if(HiRAEVT_FOUND)
-  set(SRCS ${SRCS}
-    AtEventTab/AtTabInfoHEISTmusic.cxx
-    )
-  set(DEPENDENCIES ${DEPENDENCIES}
-    HTDetectors
-    )
-endif()
 
 generate_target_and_root_library(${LIBRARY_NAME}
   LINKDEF ${LINKDEF}

@@ -1,12 +1,11 @@
-#include "AtTabMacro.h"
+#include "AtEventTabMacro.h"
 
+#include "AtEvent.h"
 #include "AtEventManagerNew.h"
 #include "AtMap.h"
-#include "AtTabInfoBase.h"
-#include "AtTabInfo.h"
+#include "AtRawEvent.h"
 
 #include <TCanvas.h>
-#include <TChain.h>
 #include <TEveBrowser.h>
 #include <TEveManager.h>
 #include <TEveWindow.h>
@@ -14,9 +13,6 @@
 #include <TROOT.h> // for TROOT, gROOT
 #include <TRootEmbeddedCanvas.h>
 #include <TStyle.h>
-#include <TTree.h>
-
-#include <iostream>
 
 constexpr auto cRED = "\033[1;31m";
 constexpr auto cYELLOW = "\033[1;33m";
@@ -24,36 +20,38 @@ constexpr auto cNORMAL = "\033[0m";
 constexpr auto cGREEN = "\033[1;32m";
 constexpr auto cBLUE = "\033[1;34m";
 
-ClassImp(AtTabMacro);
+ClassImp(AtEventTabMacro);
 
-AtTabMacro::AtTabMacro()
-   : fDetmap(nullptr), fCvsMacro(nullptr), fCols(1), fRows(1),
-     fTabName("Macro"), fTree(nullptr)
+AtEventTabMacro::AtEventTabMacro()
+   : fRawEvent(nullptr), fEvent(nullptr), fDetmap(nullptr), fCvsMacro(nullptr), fCols(1), fRows(1),
+     fTabName("Macro")
 {
 }
 
-void AtTabMacro::InitTab()
+void AtEventTabMacro::Init()
 {
 
-   std::cout << " =====  AtTabMacro::Init =====" << std::endl;
+   std::cout << " =====  AtEventTabMacro::Init =====" << std::endl;
 
    // gROOT->Reset();
    fEventManager = AtEventManagerNew::Instance();
 
+   if (fDetmap == nullptr) {
+      LOG(fatal) << "Map was never set using the function SetMap() in AtEventTabMacro!";
+   }
    //******* NO CALLS TO TCANVAS BELOW THIS ONE
 
    if (fTabName == "Macro") {
       char name[20];
-      sprintf(name, "Macro %i", fTabNumber);
+      sprintf(name, "Macro %i", fTaskNumber);
       fTabName = name;
    }
 
-
-   std::cout << " AtTabMacro::Init : Initialization complete! "
+   std::cout << " AtEventTabMacro::Init : Initialization complete! "
              << "\n";
 }
 
-void AtTabMacro::MakeTab()
+void AtEventTabMacro::MakeTab()
 {
    TEveWindowSlot *slot = nullptr;
    TEveWindowPack *pack = nullptr;
@@ -68,7 +66,7 @@ void AtTabMacro::MakeTab()
    // pack->SetVertical();
    pack->SetShowTitleBar(kFALSE);
 
-   sprintf(name, "Macro Canvas %i", fTabNumber);
+   sprintf(name, "Macro Canvas %i", fTaskNumber);
    slot = pack->NewSlot();
    TEveWindowPack *pack2 = slot->MakePack();
    pack2->SetShowTitleBar(kFALSE);
@@ -78,28 +76,12 @@ void AtTabMacro::MakeTab()
    fCvsMacro = new TCanvas("name");
    fCvsMacro->ToggleEditor();
    slot->StopEmbedding();
-
-   DrawTree();
 }
 
-void AtTabMacro::DrawTree()
+void AtEventTabMacro::DrawEvent(AtRawEvent *rawEvent, AtEvent *event)
 {
-   for (int i = 0; i < fCols * fRows; i++) {
-      fCvsMacro->cd(i + 1);
-      gPad->Clear();
-      auto it = fDrawTreeMap.find(i);
-      if (it == fDrawTreeMap.end()) {
-         return;
-      }
-      else {
-         (it->second)(fTree);
-         UpdateCvsMacro();
-      }
-   }
-}
-
-void AtTabMacro::DrawEvent()
-{
+   fRawEvent = rawEvent;
+   fEvent = event;
    for (int i = 0; i < fCols * fRows; i++) {
       fCvsMacro->cd(i + 1);
       gPad->Clear();
@@ -108,13 +90,13 @@ void AtTabMacro::DrawEvent()
          return;
       }
       else {
-         (it->second)(fTabInfo);
+         (it->second)(fRawEvent, fEvent);
          UpdateCvsMacro();
       }
    }
 }
 
-void AtTabMacro::DrawPad(Int_t padNum)
+void AtEventTabMacro::DrawPad(Int_t padNum)
 {
    for (int i = 0; i < fCols * fRows; i++) {
       fCvsMacro->cd(i + 1);
@@ -124,44 +106,28 @@ void AtTabMacro::DrawPad(Int_t padNum)
          return;
       }
       else {
-         (it->second)(fTabInfo, padNum);
+         (it->second)(fRawEvent, fEvent, padNum);
          UpdateCvsMacro();
       }
    }
 }
 
-void AtTabMacro::Reset() {
+void AtEventTabMacro::Reset() {
+   fRawEvent = nullptr;
+   fEvent = nullptr;
    fCvsMacro->Clear();
 }
 
-void AtTabMacro::SetInputTree(TString fileName, TString treeName) {
-   if(fTree != nullptr) {
-      LOG(error) << "Tree already set. Cannot set again.";
-      return;
-   }
-   fTree = new TChain(treeName);
-   fTree->Add(fileName);
-}
-
-void AtTabMacro::SetDrawTreeFunction(Int_t pos, std::function<void(TTree (*))> function) {
-   fDrawTreeMap.emplace(pos, function);
-}
-
-void AtTabMacro::SetDrawEventFunction(Int_t pos, std::function<void(AtTabInfo (*))> function) {
+void AtEventTabMacro::SetDrawEventFunction(Int_t pos, std::function<void(AtRawEvent (*), AtEvent (*))> function) {
    fDrawEventMap.emplace(pos, function);
 }
 
-void AtTabMacro::SetDrawPadFunction(Int_t pos, std::function<void(AtTabInfo (*), Int_t)> function) {
+void AtEventTabMacro::SetDrawPadFunction(Int_t pos, std::function<void(AtRawEvent (*), AtEvent (*), Int_t)> function) {
    fDrawPadMap.emplace(pos, function);
 }
 
-void AtTabMacro::UpdateCvsMacro()
+void AtEventTabMacro::UpdateCvsMacro()
 {
    fCvsMacro->Modified();
    fCvsMacro->Update();
-}
-
-void AtTabMacro::AddInfoAugment(std::string name, std::unique_ptr<AtTabInfoBase> augment)
-{
-   fTabInfo->AddAugment(name, std::move(augment));
 }

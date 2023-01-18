@@ -1,4 +1,4 @@
-#include "AtTabPad.h"
+#include "AtEventTabPad.h"
 
 #include "AtEvent.h"
 #include "AtEventManagerNew.h"
@@ -6,10 +6,6 @@
 #include "AtPad.h"
 #include "AtPadArray.h"
 #include "AtRawEvent.h"
-#include "AtTabInfo.h"
-#include "AtTabInfoBase.h"
-#include "AtTabInfoEvent.h"
-#include "AtTabInfoRawEvent.h"
 
 #include <TCanvas.h>
 #include <TEveBrowser.h>
@@ -27,16 +23,15 @@ constexpr auto cNORMAL = "\033[0m";
 constexpr auto cGREEN = "\033[1;32m";
 constexpr auto cBLUE = "\033[1;34m";
 
-ClassImp(AtTabPad);
+ClassImp(AtEventTabPad);
 
-AtTabPad::AtTabPad()
+AtEventTabPad::AtEventTabPad()
    : fRawEvent(nullptr), fEvent(nullptr), fPad(nullptr), fDetmap(nullptr), fCvsPad(nullptr), fCols(1), fRows(1),
-     fTabName("AtPad"), fEventBranch("AtEvent"), fRawEventBranch("AtRawEvent"), fInfoEventName("AtEvent"),
-     fInfoRawEventName("AtRawEvent")
+     fTabName("AtPad")
 {
 }
 
-void AtTabPad::InitTab()
+void AtEventTabPad::Init()
 {
 
    std::cout << " =====  AtEventTabPad::Init =====" << std::endl;
@@ -51,23 +46,15 @@ void AtTabPad::InitTab()
 
    if (fTabName == "AtPad") {
       char name[20];
-      sprintf(name, "AtPad %i", fTabNumber);
+      sprintf(name, "AtPad %i", fTaskNumber);
       fTabName = name;
    }
-
-   auto tTabInfoEvent = std::make_unique<AtTabInfoEvent>();
-   tTabInfoEvent->SetBranch(fEventBranch);
-   auto tTabInfoRawEvent = std::make_unique<AtTabInfoRawEvent>();
-   tTabInfoRawEvent->SetBranch(fRawEventBranch);
-
-   fTabInfo->AddAugment(fInfoEventName, std::move(tTabInfoEvent));
-   fTabInfo->AddAugment(fInfoRawEventName, std::move(tTabInfoRawEvent));
 
    std::cout << " AtEventTabPad::Init : Initialization complete! "
              << "\n";
 }
 
-void AtTabPad::MakeTab()
+void AtEventTabPad::MakeTab()
 {
    TEveWindowSlot *slot = nullptr;
    TEveWindowPack *pack = nullptr;
@@ -82,7 +69,7 @@ void AtTabPad::MakeTab()
    // pack->SetVertical();
    pack->SetShowTitleBar(kFALSE);
 
-   sprintf(name, "AtPad Canvas %i", fTabNumber);
+   sprintf(name, "AtPad Canvas %i", fTaskNumber);
    slot = pack->NewSlot();
    TEveWindowPack *pack2 = slot->MakePack();
    pack2->SetShowTitleBar(kFALSE);
@@ -94,23 +81,23 @@ void AtTabPad::MakeTab()
    slot->StopEmbedding();
 }
 
-void AtTabPad::UpdateTab()
+void AtEventTabPad::DrawEvent(AtRawEvent *rawEvent, AtEvent *event)
 {
-   fEvent = dynamic_cast<AtTabInfoEvent *>(fTabInfo->GetAugment(fInfoEventName))->GetEvent();
-   fRawEvent = dynamic_cast<AtTabInfoRawEvent *>(fTabInfo->GetAugment(fInfoRawEventName))->GetRawEvent();
+   fRawEvent = rawEvent;
+   fEvent = event;
 }
 
-void AtTabPad::DrawPad(Int_t padNum)
+void AtEventTabPad::DrawPad(Int_t padNum)
 {
    fPad = nullptr;
    fCvsPad->Clear();
    if (fRawEvent == nullptr) {
-      std::cout << "fRawEvent is nullptr for tab " << fTabNumber << "! Please set the raw event branch." << std::endl;
+      std::cout << "fRawEvent is nullptr for tab " << fTaskNumber << "! Please set the raw event branch." << std::endl;
       return;
    } else {
       fPad = fRawEvent->GetPad(padNum);
       if (fPad == nullptr) {
-         std::cout << "Pad " << padNum << " does not exist in raw event for tab " << fTabNumber << "!" << std::endl;
+         std::cout << "Pad " << padNum << " does not exist in raw event for tab " << fTaskNumber << "!" << std::endl;
          return;
       } else {
          fCvsPad->Divide(fCols, fRows);
@@ -125,12 +112,11 @@ void AtTabPad::DrawPad(Int_t padNum)
    }
 }
 
-void AtTabPad::Reset()
-{
+void AtEventTabPad::Reset() {
    fRawEvent = nullptr;
 }
 
-void AtTabPad::DrawPosition(Int_t pos)
+void AtEventTabPad::DrawPosition(Int_t pos)
 {
    std::array<Double_t, 512> array = {};
    auto it = fDrawMap.find(pos);
@@ -140,22 +126,24 @@ void AtTabPad::DrawPosition(Int_t pos)
       switch (it->second.first) {
       case PadDrawType::kADC: array = fPad->GetADC(); break;
 
-      case PadDrawType::kRawADC: {
-         auto padArray = fPad->GetRawADC();
-         for (int i = 0; i < padArray.size(); i++)
+      case PadDrawType::kRawADC:
+         { 
+            auto padArray = fPad->GetRawADC();
+            for (int i = 0; i < padArray.size(); i++)
             array[i] = padArray[i];
-         break;
-      }
-
-      case PadDrawType::kArrAug: {
-         auto augIt = fAugNames.find(pos);
-         if (augIt == fAugNames.end()) {
-            return;
-         } else {
-            array = dynamic_cast<AtPadArray *>(fPad->GetAugment(augIt->second.Data()))->GetArray();
+            break;
          }
-         break;
-      }
+
+      case PadDrawType::kArrAug:
+         {
+            auto augIt = fAugNames.find(pos);
+            if (augIt == fAugNames.end()) {
+               return;
+            } else {
+               array = dynamic_cast<AtPadArray *>(fPad->GetAugment(augIt->second.Data()))->GetArray();
+            }
+            break;
+         }
 
       default: return;
       }
@@ -168,31 +156,31 @@ void AtTabPad::DrawPosition(Int_t pos)
    }
 }
 
-void AtTabPad::SetDraw(Int_t pos, PadDrawType type)
+void AtEventTabPad::SetDraw(Int_t pos, PadDrawType type)
 {
    char name[20];
-   sprintf(name, "padHist_Tab%i_%i", fTabNumber, pos);
+   sprintf(name, "padHist_Tab%i_%i", fTaskNumber, pos);
    TH1D *padHist = new TH1D(name, name, 512, 0, 512);
    fDrawMap.emplace(pos, std::make_pair(type, padHist));
 }
 
-void AtTabPad::SetDrawADC(Int_t pos)
+void AtEventTabPad::SetDrawADC(Int_t pos)
 {
    SetDraw(pos, PadDrawType::kADC);
 }
 
-void AtTabPad::SetDrawRawADC(Int_t pos)
+void AtEventTabPad::SetDrawRawADC(Int_t pos)
 {
    SetDraw(pos, PadDrawType::kRawADC);
 }
 
-void AtTabPad::SetDrawArrayAug(Int_t pos, TString augName)
+void AtEventTabPad::SetDrawArrayAug(Int_t pos, TString augName)
 {
    SetDraw(pos, PadDrawType::kArrAug);
    fAugNames.emplace(pos, augName);
 }
 
-void AtTabPad::UpdateCvsPad()
+void AtEventTabPad::UpdateCvsPad()
 {
    fCvsPad->Modified();
    fCvsPad->Update();
