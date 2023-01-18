@@ -1,27 +1,22 @@
 #ifndef ATTABBASE_H
 #define ATTABBASE_H
 
-#include "AtTabInfo.h" // IWYU pragma: keep
-
 #include <Rtypes.h>
 
-#include <memory>
+class AtTabInfo;
 class TClass;
 
 class AtTabBase {
-protected:
-   Int_t fTabNumber{0};
-   std::unique_ptr<AtTabInfo> fTabInfo{std::make_unique<AtTabInfo>()};
-
 public:
-   AtTabBase() = default;
+   AtTabBase();
    virtual ~AtTabBase() = default;
 
    void Init();
-   void Update();
-
-   AtTabInfo *GetTabInfo() { return fTabInfo.get(); }
+   virtual void InitTab() = 0;
    virtual void Reset() = 0;
+   void Update();
+   virtual void UpdateTab() = 0;
+
 
    virtual void MakeTab() = 0;
    virtual void DrawTree() = 0;
@@ -31,11 +26,8 @@ public:
    void SetTabNumber(Int_t tabNum) { fTabNumber = tabNum; }
 
 protected:
-   /**
-    * Responsible for creating the fTabInfo object that will be updated on each event.
-    */
-   virtual void InitTab() = 0;
-   virtual void UpdateTab() = 0;
+   Int_t fTabNumber;
+   AtTabInfo *fTabInfo;
 
    ClassDef(AtTabBase, 1)
 };

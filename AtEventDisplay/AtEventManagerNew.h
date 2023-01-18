@@ -21,12 +21,14 @@ class TGTextButton;
 class TMemberInspector;
 class TGListTreeItem;
 class TList;
-class AtMap;
 
 class AtEventManagerNew : public TEveEventManager {
 private:
+   FairRootManager *fRootManager;
+   FairRunAna *fRunAna;
+
    Int_t fEntry;
-   // TGListTreeItem *fEvent;
+   TGListTreeItem *fEvent;
    TGNumberEntry *fCurrentEvent;
    TGNumberEntry *f3DThresDisplay;
 
@@ -35,25 +37,25 @@ private:
    Int_t fEntries;
 
    AtTabTask *fTabTask;
-   std::shared_ptr<AtMap> fMap;
+
    static AtEventManagerNew *fInstance;
 
 public:
    static AtEventManagerNew *Instance();
-   AtEventManagerNew(std::shared_ptr<AtMap> map);
+   AtEventManagerNew();
    virtual ~AtEventManagerNew();
-   AtMap *GetMap() { return fMap.get(); }
 
    virtual void GotoEvent(Int_t event); ///< *MENU*
    virtual void NextEvent();            ///< *MENU*
    virtual void PrevEvent();            ///< *MENU*
+   virtual void make_gui();
    virtual void SelectEvent();
 
    static void SelectPad();
-   void DrawPad(Int_t padNum);
+   void DrawUpdates(Int_t padNum);
 
-   void AddTask(FairTask *task);
-
+   void AddTask(FairTask *task) { fRunAna->AddTask(task); }
+   void AddTabTask(AtTabTask *task);
    virtual void Init();
 
    virtual Int_t GetCurrentEvent() { return fEntry; }
@@ -62,10 +64,6 @@ public:
 
    AtEventManagerNew(const AtEventManagerNew &);
    AtEventManagerNew &operator=(const AtEventManagerNew &);
-
-private:
-   void AddTabTask(AtTabTask *task);
-   void make_gui();
 
    ClassDef(AtEventManagerNew, 1);
 };

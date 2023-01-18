@@ -40,13 +40,6 @@ void run_eve_test_heist(int runNum = 214, TString OutputDataFile = "./data/outpu
 
    auto fMap = std::make_shared<AtTpcMap>();
    fMap->ParseXMLMap(mapDir.Data());
-   AtEventManagerNew *eveMan = new AtEventManagerNew(fMap);
-
-   auto tabMain = std::make_unique<AtTabMain>();
-   tabMain->SetMap(fMap);
-   tabMain->SetMultiHit(100); // Set the maximum number of multihits in the visualization
-   tabMain->SetRawEventBranch("AtRawEventFiltered");
-   tabMain->SetEventBranch("AtEventFiltered");
 
    auto tabPad = std::make_unique<AtTabPad>();
    tabPad->SetMap(fMap);
@@ -58,7 +51,17 @@ void run_eve_test_heist(int runNum = 214, TString OutputDataFile = "./data/outpu
    tabPad->SetRawEventBranch("AtRawEventFiltered");
    tabPad->SetEventBranch("AtEventFiltered");
 
+   // gROOT->ProcessLine(".L testTabMacro.C");
+   AtEventManagerNew *eveMan = new AtEventManagerNew();
+
+   auto tabMain = std::make_unique<AtTabMain>();
+   tabMain->SetMap(fMap);
+   tabMain->SetMultiHit(100); // Set the maximum number of multihits in the visualization
+   tabMain->SetRawEventBranch("AtRawEventFiltered");
+   tabMain->SetEventBranch("AtEventFiltered");
+
    auto heistInfo = std::make_unique<AtTabInfoHiRAEVT<HTMusicIC>>("MUSIC");
+   // auto heistInfo = std::make_unique<AtTabInfoHEISTmusic>();
    auto tabMac = std::make_unique<AtTabMacro>();
    tabMac->AddInfoAugment("MusicIC", std::move(heistInfo));
    tabMac->SetInputTree(evtInputDataFile, "E12014");
@@ -69,7 +72,7 @@ void run_eve_test_heist(int runNum = 214, TString OutputDataFile = "./data/outpu
    tab->AddTab(std::move(tabPad));
    tab->AddTab(std::move(tabMac));
 
-   eveMan->AddTask(tab);
+   eveMan->AddTabTask(tab);
    eveMan->Init();
 
    std::cout << "Finished init" << std::endl;
