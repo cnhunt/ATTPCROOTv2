@@ -15,7 +15,9 @@ class AtRawEvent;
 class AtMap;
 class AtPad;
 class TCanvas;
+class TEvePointSet;
 class TEveRGBAPalette;
+class TH2Poly;
 class TH1D;
 class TPaletteAxis;
 
