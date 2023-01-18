@@ -37,7 +37,7 @@ std::ostream &operator<<(std::ostream &os, const AtMap::InhibitType &t)
    return os;
 }
 
-AtMap::AtMap() : AtPadCoord(boost::extents[10240][3][2]), fPadPlane(nullptr) {}
+AtMap::AtMap() : AtPadCoord(boost::extents[10240][3][2]), fPadPlane(new TH2Poly()) {}
 
 AtPadReference AtMap::GetNearestFPN(int padNum) const
 {
@@ -62,14 +62,6 @@ AtPadReference AtMap::GetNearestFPN(const AtPadReference &ref) const
 bool AtMap::IsFPNchannel(const AtPadReference &ref) const
 {
    return ref.ch == 11 || ref.ch == 22 || ref.ch == 45 || ref.ch == 56;
-}
-
-TH2Poly *AtMap::GetPadPlane()
-{
-   if (fPadPlane == nullptr)
-      GeneratePadPlane();
-
-   return dynamic_cast<TH2Poly *>(fPadPlane->Clone());
 }
 
 Int_t AtMap::GetPadNum(const AtPadReference &PadRef) const
@@ -198,6 +190,7 @@ void AtMap::ParseMapList(TXMLNode *node)
          // std::cout <<node->GetNodeName()<<std::endl;
       }
    }
+
    kIsParsed = true;
 }
 

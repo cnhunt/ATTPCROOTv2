@@ -32,6 +32,14 @@ public:
    enum class PadDrawType { kADC, kRawADC, kArrAug };
 
 protected:
+   AtPad *fPad{nullptr};
+
+   AtEventManagerNew *fEventManager{nullptr};
+
+   std::shared_ptr<AtMap> fDetmap{nullptr};
+
+   // TString fMap;
+
    TCanvas *fCvsPad{nullptr};
 
    Int_t fRows{1};
@@ -59,7 +67,7 @@ public:
    void SetDrawADC(Int_t pos);
    void SetDrawRawADC(Int_t pos);
    void SetDrawArrayAug(Int_t pos, TString augName);
-
+   void SetMap(std::shared_ptr<AtMap> map) { fDetmap = map; }
    void SetColumns(Int_t cols) { fCols = cols; }
    void SetRows(Int_t rows) { fRows = rows; }
    void SetTabName(TString tabName) { fTabName = tabName; }
@@ -72,7 +80,7 @@ public:
 
 private:
    void SetDraw(Int_t pos, PadDrawType type);
-   void DrawPosition(Int_t pos, AtPad *pad);
+   void DrawPosition(Int_t pos);
    void UpdateCvsPad();
 
    // Functions for drawing hits

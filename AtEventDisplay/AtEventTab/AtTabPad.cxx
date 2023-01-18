@@ -33,6 +33,14 @@ void AtTabPad::InitTab()
 
    std::cout << " =====  AtEventTabPad::Init =====" << std::endl;
 
+   // gROOT->Reset();
+   fEventManager = AtEventManagerNew::Instance();
+
+   if (fDetmap == nullptr) {
+      LOG(fatal) << "Map was never set using the function SetMap() in AtEventTabPad!";
+   }
+   //******* NO CALLS TO TCANVAS BELOW THIS ONE
+
    if (fTabName == "AtPad") {
       char name[20];
       sprintf(name, "AtPad %i", fTabNumber);
@@ -71,17 +79,15 @@ void AtTabPad::MakeTab()
    pack2->SetVertical();
    slot = pack2->NewSlot();
    slot->StartEmbedding();
-
-   // Doing this here so it is only done once. Repeated Clear() and Divide() calls were causing
-   // a seg fault for reasons I do not understand.
    fCvsPad = new TCanvas(name);
-   fCvsPad->Divide(fCols, fRows);
-
    fCvsPad->ToggleEditor();
    slot->StopEmbedding();
 }
 
-void AtTabPad::UpdateTab() {}
+void AtTabPad::UpdateTab()
+{
+   // fEvent = dynamic_cast<AtTabInfoFairRoot<AtEvent> *>(fTabInfo->GetAugment(fInfoEventName))->GetInfo();
+}
 
 void AtTabPad::DrawPad(Int_t padNum)
 {
@@ -89,25 +95,27 @@ void AtTabPad::DrawPad(Int_t padNum)
    AtRawEvent *fRawEvent =
       dynamic_cast<AtTabInfoFairRoot<AtRawEvent> *>(fTabInfo->GetAugment(fInfoRawEventName))->GetInfo();
 
+   fPad = nullptr;
+   fCvsPad->Clear();
    if (fRawEvent == nullptr) {
       std::cout << "fRawEvent is nullptr for tab " << fTabNumber << "! Please set the raw event branch." << std::endl;
       return;
+   } else {
+      fPad = fRawEvent->GetPad(padNum);
+      if (fPad == nullptr) {
+         std::cout << "Pad " << padNum << " does not exist in raw event for tab " << fTabNumber << "!" << std::endl;
+         return;
+      } else {
+         fCvsPad->Divide(fCols, fRows);
+         for (int i = 0; i < fCols * fRows; i++) {
+            fCvsPad->cd(i + 1);
+            DrawPosition(i);
+            UpdateCvsPad();
+         }
+         // DrawWave(PadNum);
+         UpdateCvsPad();
+      }
    }
-
-   auto fPad = fRawEvent->GetPad(padNum);
-   if (fPad == nullptr) {
-      std::cout << "Pad " << padNum << " does not exist in raw event for tab " << fTabNumber << "!" << std::endl;
-      return;
-   }
-
-   fCvsPad->Clear("D");
-   for (int i = 0; i < fCols * fRows; i++) {
-      fCvsPad->cd(i + 1);
-      DrawPosition(i, fPad);
-      // UpdateCvsPad();
-   }
-   // DrawWave(PadNum);
-   UpdateCvsPad();
 }
 
 void AtTabPad::Reset()
@@ -115,9 +123,8 @@ void AtTabPad::Reset()
    // fRawEvent = nullptr;
 }
 
-void AtTabPad::DrawPosition(Int_t pos, AtPad *fPad)
+void AtTabPad::DrawPosition(Int_t pos)
 {
-   LOG(debug) << "Drawing position in AtTabPad";
    std::array<Double_t, 512> array = {};
    auto it = fDrawMap.find(pos);
    if (it == fDrawMap.end()) {

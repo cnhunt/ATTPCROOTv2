@@ -41,11 +41,7 @@ public:
 
    void Update(SubjectBase *changedSubject) override {}
 
-   T *GetInfo()
-   {
-      Update();
-      return fDetector;
-   }
+   T *GetInfo() { return fDetector; }
 
    void SetTree(TString name) { fTree = name; }
 };

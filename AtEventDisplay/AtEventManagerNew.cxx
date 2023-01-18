@@ -376,7 +376,6 @@ void AtEventManagerNew::RegisterDataHandles()
 {
    if (fTabTask == nullptr)
       LOG(fatal) << "Cannot register data handles without a AtTabTask! Was it added to the AtEventManager?";
-
    for (auto &branchSubject : fSubjectBranchNames) {
       fTabTask->AddDataSourceToTabs(branchSubject.get());
    }
