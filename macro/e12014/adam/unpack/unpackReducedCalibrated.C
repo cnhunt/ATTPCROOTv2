@@ -81,7 +81,7 @@ void unpackReducedCalibrated(int runNumber)
    auto filterSub = new AtFilterSubtraction(mapping);
    filterSub->SetThreshold(threshold);
    AtFilterTask *subTask = new AtFilterTask(filterSub);
-   subTask->SetPersistence(true);
+   subTask->SetPersistence(false);
    subTask->SetFilterAux(true);
    subTask->SetOutputBranch("AtRawEventSub");
 
@@ -96,13 +96,8 @@ void unpackReducedCalibrated(int runNumber)
    auto psa = std::make_unique<AtPSAMax>();
    psa->SetThreshold(threshold);
 
-   AtPSAtask *psaTask = new AtPSAtask(psa->Clone());
+   AtPSAtask *psaTask = new AtPSAtask(std::move(psa));
    psaTask->SetInputBranch("AtRawEventCal");
-   psaTask->SetOutputBranch("AtEventCal");
-   psaTask->SetPersistence(true);
-
-   AtPSAtask *psaTask2 = new AtPSAtask(psa->Clone());
-   psaTask->SetInputBranch("AtRawEvent");
    psaTask->SetOutputBranch("AtEventH");
    psaTask->SetPersistence(true);
 
@@ -112,7 +107,6 @@ void unpackReducedCalibrated(int runNumber)
    run->AddTask(subTask);
    run->AddTask(calTask);
    run->AddTask(psaTask);
-   run->AddTask(psaTask2);
 
    run->Init();
 
@@ -120,7 +114,7 @@ void unpackReducedCalibrated(int runNumber)
    auto numEvents = unpackTask->GetNumEvents();
 
    // numEvents = 1700;//217;
-   numEvents = 500;
+   // numEvents = 20;
 
    std::cout << "Unpacking " << numEvents << " events. " << std::endl;
 

@@ -84,7 +84,8 @@ void AtTabMacro::DrawTree()
       auto it = fDrawTreeMap.find(i);
       if (it == fDrawTreeMap.end()) {
          return;
-      } else {
+      }
+      else {
          (it->second)(fTree);
          UpdateCvsMacro();
       }
@@ -122,14 +123,12 @@ void AtTabMacro::DrawPad(Int_t padNum)
    }
 }
 
-void AtTabMacro::Reset()
-{
+void AtTabMacro::Reset() {
    fCvsMacro->Clear();
 }
 
-void AtTabMacro::SetInputTree(TString fileName, TString treeName)
-{
-   if (fTree != nullptr) {
+void AtTabMacro::SetInputTree(TString fileName, TString treeName) {
+   if(fTree != nullptr) {
       LOG(error) << "Tree already set. Cannot set again.";
       return;
    }
@@ -137,18 +136,15 @@ void AtTabMacro::SetInputTree(TString fileName, TString treeName)
    fTree->Add(fileName);
 }
 
-void AtTabMacro::SetDrawTreeFunction(Int_t pos, std::function<void(TTree(*))> function)
-{
+void AtTabMacro::SetDrawTreeFunction(Int_t pos, std::function<void(TTree (*))> function) {
    fDrawTreeMap.emplace(pos, function);
 }
 
-void AtTabMacro::SetDrawEventFunction(Int_t pos, std::function<void(AtTabInfo(*))> function)
-{
+void AtTabMacro::SetDrawEventFunction(Int_t pos, std::function<void(AtTabInfo (*))> function) {
    fDrawEventMap.emplace(pos, function);
 }
 
-void AtTabMacro::SetDrawPadFunction(Int_t pos, std::function<void(AtTabInfo(*), Int_t)> function)
-{
+void AtTabMacro::SetDrawPadFunction(Int_t pos, std::function<void(AtTabInfo (*), Int_t)> function) {
    fDrawPadMap.emplace(pos, function);
 }
 

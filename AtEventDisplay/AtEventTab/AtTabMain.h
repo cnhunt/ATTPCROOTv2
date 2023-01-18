@@ -53,11 +53,11 @@ protected:
    Int_t fMultiHit{10};
    Bool_t fIsRawData;
 
-   TString fDefaultEventBranch{"AtEventH"};
-   TString fDefaultRawEventBranch{"AtRawEvent"};
+   TString fEventBranch;
+   TString fRawEventBranch;
 
-   std::string fInfoEventName{"AtEvent"};
-   std::string fInfoRawEventName{"AtRawEvent"};
+   std::string fInfoEventName;
+   std::string fInfoRawEventName;
 
    TEveRGBAPalette *fRGBAPalette;
 
@@ -76,8 +76,8 @@ public:
    void SetHitAttributes(Color_t, Size_t, Style_t);
    void SetMultiHit(Int_t hitMax);
 
-   void SetEventBranch(TString name) { fDefaultEventBranch = name; }
-   void SetRawEventBranch(TString name) { fDefaultRawEventBranch = name; }
+   void SetEventBranch(TString name) { fEventBranch = name; }
+   void SetRawEventBranch(TString name) { fRawEventBranch = name; }
 
 private:
    void DrawPadPlane();
