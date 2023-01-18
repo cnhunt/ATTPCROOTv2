@@ -16,13 +16,13 @@ class AtTabTask : public FairTask {
 protected:
    std::vector<std::unique_ptr<AtTabBase> > fTabs;
 
-   TTree *fTree{nullptr};
+   TTree *fTree;
    TString fTreeName;
 
 public:
-   AtTabTask() {}
+   AtTabTask();
 
-   virtual ~AtTabTask() = default;
+   ~AtTabTask();
 
    InitStatus Init() override;
    void Exec(Option_t *option) override;

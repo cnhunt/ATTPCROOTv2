@@ -20,12 +20,19 @@ constexpr auto cBLUE = "\033[1;34m";
 
 ClassImp(AtTabTask);
 
+AtTabTask::AtTabTask()
+{
+
+}
+
+AtTabTask::~AtTabTask() = default;
+
 InitStatus AtTabTask::Init()
 {
 
    std::cout << " =====  AtTabTask::Init =====" << std::endl;
 
-   for (int i = 0; i < fTabs.size(); i++) {
+   for(int i = 0; i < fTabs.size(); i++) {
       fTabs[i]->SetTabNumber(i);
       fTabs[i]->Init();
       fTabs[i]->MakeTab();
@@ -40,22 +47,22 @@ void AtTabTask::Exec(Option_t *option)
 {
    Reset();
 
-   for (auto &fTab : fTabs) {
-      fTab->Update();
-      fTab->DrawEvent();
+   for(int i = 0; i < fTabs.size(); i++) {
+      fTabs[i]->Update();
+      fTabs[i]->DrawEvent();
    }
 }
 
 void AtTabTask::Reset()
 {
-   for (auto &fTab : fTabs) {
-      fTab->Reset();
+   for(int i = 0; i < fTabs.size(); i++) {
+      fTabs[i]->Reset();
    }
 }
 
 void AtTabTask::DrawPad(Int_t PadNum)
 {
-   for (auto &fTab : fTabs) {
-      fTab->DrawPad(PadNum);
+   for(int i = 0; i < fTabs.size(); i++) {
+      fTabs[i]->DrawPad(PadNum);
    }
 }
