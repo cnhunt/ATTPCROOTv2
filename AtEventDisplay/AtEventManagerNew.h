@@ -5,7 +5,6 @@
 
 #include <Rtypes.h>
 #include <TEveEventManager.h>
-#include <TEveManager.h>
 
 #include <vector>
 
@@ -21,7 +20,6 @@ class TMemberInspector;
 class TGListTreeItem;
 class AtEvent;
 class TClonesArray;
-class TList;
 
 class AtEventManagerNew : public TEveEventManager {
 private:
@@ -40,13 +38,10 @@ private:
    Bool_t kToggleData;
 
    Int_t fEntries;
-   Int_t fTabTaskNum;
-
-   TList *fTabList;
+   Int_t fDrawTaskNum;
 
    static AtEventManagerNew *fInstance;
 
-   void MakeTabs();
    void MakeMainTab();
 
 public:
@@ -60,14 +55,12 @@ public:
    virtual void make_gui();
    virtual void SelectEvent();
 
-   void SetfEvent() { fEvent = gEve->AddEvent(this); }
-
    static void SelectPad();
-   // static void SelectPad(Int_t drawNums);
-   static void DrawUpdates(Int_t padNum);
+   //static void SelectPad(Int_t drawNums);
+   static void DrawUpdates(Int_t drawNums, Int_t padNum);
 
    void AddTask(FairTask *task) { fRunAna->AddTask(task); }
-   void AddTabTask(FairTask *task);
+   void AddDrawTask(FairTask *task);
    // virtual void InitRiemann(Int_t option=1, Int_t level=3, Int_t nNodes=10000);
    virtual void Init(Int_t option = 1, Int_t level = 3, Int_t nNodes = 10000);
 
@@ -75,8 +68,6 @@ public:
 
    TCanvas *GetCvsPadPlane() { return fCvsPadPlane; }
    TCanvas *GetCvsPadWave() { return fPadWave; }
-
-   TList *GetTabList() { return fTabList; }
 
    void RunEvent();
 
