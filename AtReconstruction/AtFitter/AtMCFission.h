@@ -46,6 +46,8 @@ protected:
    float fAmp = 1;
    bool fFitAmp = true;
 
+   bool fDoFitAngle = false;
+
 public:
    AtMCFission(SimPtr sim, ClusterPtr cluster, PulsePtr pulse) : AtMCFitter(sim, cluster, pulse) {}
    virtual ~AtMCFission() = default;
@@ -57,6 +59,8 @@ public:
       fZmin = Zmin;
       fZmax = Zmax;
    }
+
+   void SetDoFitAngle(bool val = true) { fDoFitAngle = val; }
 
    // Old static functinos used to test different objective functions in early analysis
    static double ObjectiveChargeChi2(const std::vector<double> &exp, const std::vector<double> &sim, const double *par);

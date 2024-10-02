@@ -64,6 +64,8 @@ void AtMCFission::CreateParamDistros()
    fParameters["vY"] = std::make_shared<AtUniformDistribution>(0, 0);
    fParameters["vZ"] = std::make_shared<AtUniformDistribution>(0, 0);
    fParameters["Z"] = std::make_shared<AtStudentDistribution>(0, 0);
+   if (fDoFitAngle)
+      fParameters["ang"] = std::make_shared<AtUniformDistribution>(90 * TMath::DegToRad(), 90 * TMath::DegToRad());
 
    // These are the angle to sample w.r.t. the nominal beam axis
    fParameters["thBeam"] = std::make_shared<AtStudentDistribution>(0, 1 * TMath::DegToRad());
@@ -549,6 +551,9 @@ AtMCResult AtMCFission::DefineEvent()
    result.fParameters["A1"] = fCN.A - A1;
 
    result.fParameters["thCM"] = 90 * TMath::DegToRad(); // Decay angle in CoM frame
+   if(fDoFitAngle)
+      result.fParameters["thCM"] = fParameters["ang"]->Sample(); // Set decay angle in CoM frame by sample
+
    return result;
 }
 
